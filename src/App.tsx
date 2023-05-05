@@ -405,9 +405,14 @@ const App = () => {
       }
       imgName = imgName.substring(imgName.lastIndexOf("/") + 1);
       const imgData: File = data instanceof File ? data : await getFile(data);
+
+      console.log("imgData:", imgData);
+
       const img = new Image();
       img.src = URL.createObjectURL(imgData);
+      console.log("before stuff in img.onload()", img.src)
       img.onload = () => {
+        console.log("img.onload()");
         setIsToolBarUpload(false);
         const { height, width, scale, uploadScale } = handleImageScale(img);
         setModelScale({
@@ -421,6 +426,9 @@ const App = () => {
         });
         img.width = Math.round(width * scale);
         img.height = Math.round(height * scale);
+
+        console.log("getting past main stuff in img.onload()")
+
         setImage(img);
         setPrevImage(img);
         setIsErased(false);
@@ -435,6 +443,7 @@ const App = () => {
           shouldDownload,
           shouldNotFetchAllModel,
         });
+        console.log("model return");
       };
     } catch (error) {
       console.log(error);
@@ -447,7 +456,7 @@ const App = () => {
   // }, [image]);
 
   const handleSegModelResults = ({ tensor }: { tensor: Tensor }) => {
-    // console.log("handleSegModelResults");
+    console.log("handleSegModelResults");
     setTensor(tensor);
     setIsLoading(false);
     setIsErasing(false);
@@ -470,7 +479,7 @@ const App = () => {
     }[];
     image_height: number;
   }) => {
-    // console.log("handleAllModelResults");
+    console.log("handleAllModelResults");
     const allMaskSVG = allJSON.map(
       (el: {
         encodedMask: string;

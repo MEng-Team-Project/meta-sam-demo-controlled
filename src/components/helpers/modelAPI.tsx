@@ -27,14 +27,14 @@ const setParmsandQueryModel = ({
   shouldDownload,
   shouldNotFetchAllModel,
 }: setParmsandQueryModelProps) => {
-  // console.log("setParmsandQueryModel");
+  console.log("setParmsandQueryModel");
   const canvas = document.createElement("canvas");
   canvas.width = Math.round(width * uploadScale);
   canvas.height = Math.round(height * uploadScale);
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
   ctx.drawImage(imgData, 0, 0, canvas.width, canvas.height);
-  // console.log("plot uploaded image");
+  console.log("plot uploaded image");
   canvas.toBlob(
     (blob) => {
       blob &&
@@ -63,11 +63,12 @@ const queryModelReturnTensors = async ({
   shouldNotFetchAllModel,
 }: queryModelReturnTensorsProps) => {
 
-  // console.log("image_height, imgName, shouldDownload, shouldNotFetchAllModel:", image_height, imgName, shouldDownload, shouldNotFetchAllModel)
-  // console.log("pre-queryModelReturnTensors");
+  console.log("blob, image_height, imgName, shouldDownload, shouldNotFetchAllModel:", blob, image_height, imgName, shouldDownload, shouldNotFetchAllModel)
+  console.log("pre-queryModelReturnTensors");
   if (!API_ENDPOINT) return;
   if (!ALL_MASK_API_ENDPOINT) return;
-  // console.log("post-queryModelReturnTensors");
+  console.log("post-queryModelReturnTensors");
+  /*
   const segRequest =
     imgName && !shouldDownload
       ? fetch(`/assets/gallery/${imgName}.txt`)
@@ -75,7 +76,15 @@ const queryModelReturnTensors = async ({
           method: "POST",
           body: blob,
         });
+  */
+  const segRequest = fetch(`${API_ENDPOINT}`,
+  {
+    method: "POST",
+    body: blob,
+  });
+  console.log("segRequest:", segRequest)
   segRequest.then(async (segResponse) => {
+    console.log("segRequest.then:", segResponse)
     if (shouldDownload) {
       const segResponseClone = segResponse.clone();
       const segResponseBlob = await segResponseClone.blob();
@@ -89,6 +98,7 @@ const queryModelReturnTensors = async ({
         uint8arr[i] = binaryString.charCodeAt(i);
       }
       const float32Arr = new Float32Array(uint8arr.buffer);
+      console.log("float32Arr:", float32Arr)
       return float32Arr;
     });
     const lowResTensor = new Tensor("float32", embedArr[0], [1, 256, 64, 64]);

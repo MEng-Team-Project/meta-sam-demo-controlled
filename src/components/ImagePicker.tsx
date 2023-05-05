@@ -159,27 +159,9 @@ const ImagePicker = ({
 
   return (
     <div className="pt-6 mx-4">
-      {/*!enableDemo && <StarterModal />*/}
-      {/* <Button onClick={downloadAllImageResponses}>
-        Download All Image Responses
-      </Button> */}
       <div className="flex flex-row py-5 text-sm align-middle md:text-lg">
         {/* <AiOutlineArrowDown className="mr-2" /> */}
         <div className="flex items-center">
-          <svg
-            width="8"
-            height="10"
-            viewBox="0 0 8 10"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="mr-2"
-          >
-            <path
-              d="M8 6.32142L4 10L0 6.32142L0.69323 5.67114L3.5 8.25215L3.5 0H4.5L4.5 8.23964L7.29289 5.67114L8 6.32142Z"
-              fill="#1C2B33"
-            />
-          </svg>
-          <span>Find a photo in the gallery, or</span>
           <span {...getRootProps()}>
             <input {...getInputProps()} />
             <button className="ml-1 text-blue-700 underline">
@@ -187,19 +169,6 @@ const ImagePicker = ({
             </button>
           </span>
         </div>
-      </div>
-      <div
-        className={`h-full w-full overflow-y-scroll pb-20 ${
-          showGallery ? "fade-in" : ""
-        }`}
-      >
-        <PhotoAlbum
-          layout={isMobile ? "columns" : "rows"}
-          photos={photos}
-          columns={1}
-          onClick={(e: any) => handleSelectedImage(e.event.target.src)}
-          renderPhoto={image}
-        />
       </div>
     </div>
   );

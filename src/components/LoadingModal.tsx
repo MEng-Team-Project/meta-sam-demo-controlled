@@ -13,7 +13,7 @@ const LoadingModal = ({ handleResetState }: LoadingModalProps) => {
     eraserText: [eraserText, setEraserText],
   } = useContext(AppContext)!;
 
-  console.log("Loading modal");
+  console.log("Loading modal", showLoadingModal, image);
   
   return (
     <>
