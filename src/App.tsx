@@ -55,7 +55,7 @@ const App = () => {
     clicks: [clicks, setClicks],
     image: [image, setImage],
     prevImage: [prevImage, setPrevImage],
-    svg: [, setSVG],
+    svg: [svg, setSVG],
     svgs: [svgs, setSVGs],
     allsvg: [, setAllsvg],
     isErased: [, setIsErased],
@@ -95,6 +95,7 @@ const App = () => {
     | null
   >(null);
   const [modelScale, setModelScale] = useState<modelScaleProps | null>(null);
+  const [svgMessage, setSvgMessage] = useState(null);
 
   // useEffect(() => {
   //   // Preload images
@@ -107,6 +108,7 @@ const App = () => {
   // console.log("WHY IS THIS NOT RUNNING?")
   useEffect(() => {
     const initModel = async () => {
+      console.log("init model");
       try {
         // if (process.env.MODEL_DIR === undefined) return;
         const MODEL_DIR = "./interactive_module_quantized_592547_2023_03_19_sam6_long_uncertain.onnx";
@@ -137,6 +139,7 @@ const App = () => {
   }, []);
 
   const runMultiMaskModel = async () => {
+    console.log("runMultiMaskModel");
     try {
       if (
         multiMaskModel === null ||
@@ -250,7 +253,7 @@ const App = () => {
   };
 
   const runModel = async () => {
-    // console.log("Running singleMaskModel");
+    console.log("Running singleMaskModel");
     try {
       if (
         model === null ||
@@ -267,15 +270,18 @@ const App = () => {
         last_pred_mask: predMask,
       });
       if (feeds === undefined) return;
-      // const beforeONNX = Date.now();
+      const beforeONNX = Date.now();
       const results = await model.run(feeds);
-      // const afterONNX = Date.now();
-      // console.log(`ONNX took ${afterONNX - beforeONNX}ms`);
+      const afterONNX = Date.now();
+      console.log(`ONNX took ${afterONNX - beforeONNX}ms`);
       const output = results[model.outputNames[0]];
+      console.log(`output_names: ${model.outputNames}`);
       if (hasClicked) {
-        // const beforeSVG = Date.now();
+        console.log("HAS CLICKED", output.dims, output.data);
+        const beforeSVG = Date.now();
         const pred_mask = results[model.outputNames[1]];
         setPredMask(pred_mask);
+        console.log("pred_mask:", pred_mask)
         if (!predMasksHistory) {
           setPredMasks([...(predMasks || []), pred_mask]);
         }
@@ -285,14 +291,18 @@ const App = () => {
           output.dims[0]
         );
         setSVG(svgStr);
-        setMask(output.data);
-        // const afterSVG = Date.now();
-        // console.log(`SVG took ${afterSVG - beforeSVG}ms`);
+        setSvgMessage(svgStr);
+        // console.log("svgStr:", svgStr)
+        handleParentMessage({data: {type: "RECEIVE", data: svgStr}})
+        // setMask(output.data);
+        const afterSVG = Date.now();
+        console.log(`SVG took ${afterSVG - beforeSVG}ms`);
       } else {
-        // const beforeMask = Date.now();
+        console.log("!HAS CLICKED");
+        const beforeMask = Date.now();
         setMaskImg(rleToImage(output.data, output.dims[0], output.dims[1]));
-        // const afterMask = Date.now();
-        // console.log(`Mask took ${afterMask - beforeMask}ms`);
+        const afterMask = Date.now();
+        console.log(`Mask took ${afterMask - beforeMask}ms`);
       }
       setClick(null);
       setIsLoading(false);
@@ -493,6 +503,7 @@ const App = () => {
           el.encodedMask
         );
         const svg = traceCompressedRLeStringToSVG(maskenc, image_height);
+        console.log("pred svg:", svg, el.point_coord);
         return { svg: svg, point_coord: el.point_coord };
       }
     );
@@ -523,6 +534,33 @@ const App = () => {
     setIsHovering(null);
     setPredMasks(null);
   };
+
+  const handleParentMessage = (event: any) => {
+    console.log("handleParentMessage:", event)
+    if (event.data.type == "SEND") {
+      try {
+        const newURL = event.data.data;
+        handleSelectedImage(new URL(newURL)); 
+      } catch {
+
+      }
+    } else if (event.data.type == "RECEIVE") {
+      console.log("RECEIVE: Send annotation data back to parent modal", svgMessage)
+      const parentWindow = window.parent;
+      const message = {
+        type: "RECEIVE",
+        data: svgMessage
+      }
+      parentWindow.postMessage(message, '*');
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('message', handleParentMessage);
+    return () => {
+      window.removeEventListener('message', handleParentMessage);
+    };
+  }, []);
 
   return (
     <>

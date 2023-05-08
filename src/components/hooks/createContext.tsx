@@ -128,6 +128,10 @@ interface contextProps {
     isToolBarUpload: boolean,
     setIsToolBarUpload: React.Dispatch<React.SetStateAction<boolean>>
   ];
+  externalURL: [
+    externalURL: string,
+    setIsToolBarUpload: React.Dispatch<React.SetStateAction<string>>
+  ]
 }
 
 const AppContext = createContext<contextProps | null>(null);

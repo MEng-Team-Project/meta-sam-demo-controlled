@@ -120,6 +120,7 @@ const SegmentDrawer = ({
           <div className="flex justify-between p-2 pb-3">
             <span className="leading-3">Tools</span>
           </div>
+          {/*
           {uploadClick && (
             <div className="flex justify-between px-3 py-2 mb-3 cursor-pointer rounded-xl outline outline-gray-200">
               <button
@@ -151,6 +152,7 @@ const SegmentDrawer = ({
               </button>
             </div>
           )}
+          */}
           <div
             onClick={() => {
               segmentTypes !== "Click" && handleResetInteraction();
@@ -429,7 +431,7 @@ const SegmentDrawer = ({
               />
             )}
           </div>
-
+          {/*
           <div
             onClick={() => {
               segmentTypes !== "All" && handleResetInteraction();
@@ -479,6 +481,7 @@ const SegmentDrawer = ({
               setIsCutOutMounted(false);
             }}
           >
+          
             <div className="flex">
               <Sparkle isActive={true} />
               <span
@@ -492,6 +495,7 @@ const SegmentDrawer = ({
                 Everything
               </span>
             </div>
+            
             {segmentTypes !== "All" && visibleAllHover && (
               <Animate isMounted={isAllMounted}>
                 <p
@@ -527,8 +531,9 @@ const SegmentDrawer = ({
                 handleMultiMaskMode={handleMultiMaskMode}
               />
             )}
-          </div>
-
+          </div>*/}
+          
+          {/*
           <div
             onClick={(e) => {
               clearTimeout(cutOutTimeout);
@@ -638,6 +643,7 @@ const SegmentDrawer = ({
               </>
             )}
           </div>
+          */}
         </div>
       </div>
     </section>
