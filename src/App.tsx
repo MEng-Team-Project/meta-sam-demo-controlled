@@ -293,7 +293,14 @@ const App = () => {
         setSVG(svgStr);
         setSvgMessage(svgStr);
         // console.log("svgStr:", svgStr)
-        handleParentMessage({data: {type: "RECEIVE", data: svgStr}})
+        handleParentMessage({
+          data: {
+            type: "RECEIVE",
+            data: {
+              svg: svgStr,
+              scale: modelScale
+            }
+          }})
         // setMask(output.data);
         const afterSVG = Date.now();
         console.log(`SVG took ${afterSVG - beforeSVG}ms`);
@@ -547,10 +554,7 @@ const App = () => {
     } else if (event.data.type == "RECEIVE") {
       console.log("RECEIVE: Send annotation data back to parent modal", svgMessage)
       const parentWindow = window.parent;
-      const message = {
-        type: "RECEIVE",
-        data: svgMessage
-      }
+      const message = event.data;
       parentWindow.postMessage(message, '*');
     }
   };
